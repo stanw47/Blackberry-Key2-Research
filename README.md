@@ -1,81 +1,152 @@
-# BlackBerry KEY2 Research
+# BlackBerry KEY2 (BBF100-6) — Research
 
-Reverse-engineering, unlock, and LineageOS research for the **BlackBerry KEY2
-(BBF100-6, India dual-SIM)** — the UEFI/ABL sibling of the KEYone, and the
-device where the unpatched **CVE-2021-1931** fastboot overflow still yields a
-bootloader unlock.
-
+> Reverse-engineering, unlock, and LineageOS research for the **BlackBerry KEY2**
+> (BBF100-6, India/APAC dual-SIM) — the UEFI/ABL sibling of the KEYone, and the
+> device where the unpatched **CVE-2021-1931** fastboot overflow still yields a
+> bootloader unlock.
+>
 > Part of the **[Blackberry-Research](https://github.com/stanw47/Blackberry-Research)**
-> collection. Cross-device mechanisms live in the hub; this repo is KEY2-specific.
-
-> **Disclaimer.** This repo is a *research aid*, not a flashing guide.
-> Everything here is for educational / defensive research on devices owned by
-> the author. Unlocking a bootloader and flashing firmware can **permanently
-> brick** a device with no recovery short of JTAG/ISP chip-out, and unlocks
-> wipe userdata. Proceed at your own risk. Third-party tool binaries are
-> **not redistributed here** — hashes and provenance are recorded instead.
+> collection · [Williamson Security Solutions](https://williamsonsecuritysolutions.com)
 
 ---
 
-## Device
+## Disclaimer
+
+> **Research aid, not a flashing guide.** Unlocking a bootloader and flashing
+> firmware can **permanently brick** a device, and unlocks wipe userdata.
+> Third-party tool binaries are **not redistributed** — hashes/provenance are
+> recorded instead. For educational / defensive research on a device the author
+> owns. **At your own risk.**
+
+---
+
+## Device Details
 
 | Field | Value |
 |---|---|
-| Model | **BBF100-6** (India/APAC, dual-SIM) |
+| Model | BlackBerry KEY2 **BBF100-6** |
 | Codename | `bbf100` / athena |
-| Serial | `5000116887` |
-| SoC | **SDM660 / Snapdragon 660** (`sdm660`) |
-| Bootloader | **UEFI ABL** (`abl_a` / `abl_b`) — CVE-2021-1931 target |
-| Stock build | **ABN088** (Android 8.1.0, kernel 4.4.78-perf+) |
-| Security patch | 2018-12-01 |
-| Fingerprint | `blackberry/bbf100dsglobalindia/bbf100:8.1.0/OPM1.171019.026/ABN088:user/release-keys` |
-| OEM unlock | `ro.oem_unlock_supported = true` |
-| Verified boot | green / `flash.locked = 1` (stock) |
-| Status | **Unlocked + running LineageOS 22.2 (Android 15), dual-SIM working** |
-
-Full live recon: [`notes/04-key2-lineageos-research.md`](notes/04-key2-lineageos-research.md).
+| SoC | Qualcomm **SDM660** (Snapdragon 660) |
+| OS / software | Android 8.1 (stock) → **LineageOS 22.2** |
+| Current build | LineageOS 22.2 (Android 15), kernel 4.4.302 |
+| Previous builds | stock **ABN088** (Android 8.1.0, kernel 4.4.78), patch 2018-12-01 |
+| Carrier / unlock | **India/APAC variant; dual-SIM**; `ro.oem_unlock_supported=true`; **UNLOCKED** |
+| SIM | **dual-SIM** |
 
 ### A/B partition layout
 
-Unlike the KEYone (A-only), the KEY2 is A/B — and the bootloader is slotted:
+Unlike the KEYone (A-only), the KEY2 is A/B and the bootloader is slotted:
 
 ```
-abl_a  -> mmcblk0p37     abl_b  -> mmcblk0p49
-xbl_a  -> p27            xbl_b  -> p39
-tz_a   -> p28            tz_b   -> p40
-boot   -> p23 (not slotted)   recovery -> p57   recoverysig -> p58
+abl_a -> p37   abl_b -> p49   xbl_a -> p27   xbl_b -> p39   tz_a -> p28   tz_b -> p40
+boot -> p23 (not slotted)   recovery -> p57   recoverysig -> p58
 vbmeta -> p19   system -> p73   vendor -> p74   oem -> p75
 userdata -> p77   misc -> p54   frp -> p56   nvuser -> p67   perm -> p66
 ```
 
-BlackBerry's A/B implementation is inconsistent enough that the unlock
-procedure requires flashing the stock autoloader **twice** (both slots) before
-unlocking. Raw capture: [`recon/key2_byname.txt`](recon/key2_byname.txt).
+BlackBerry's A/B implementation is inconsistent enough that the unlock requires
+flashing the stock autoloader **twice** (both slots). Raw capture:
+[`recon/key2_byname.txt`](recon/key2_byname.txt).
 
 ---
 
-## The unlock — CVE-2021-1931
+## Current Status
 
-BlackBerry/TCL's `authboot` normally refuses bootloader operations (as on the
-KEYone), **but TCL never patched Qualcomm CVE-2021-1931 on the KEY2 series**:
-a buffer overflow in the UEFI ABL fastboot parser lets a host overwrite the
-RAM-resident bootloader with a pre-patched copy, flipping the device from
-`PRODUCT` to `FACTORY` mode.
+The KEY2 is **unlocked and running LineageOS 22.2 (Android 15)** with dual-SIM
+working. Unlock was achieved via the unpatched Qualcomm **CVE-2021-1931** in the
+UEFI ABL fastboot parser (the `kibo` payload), which flips the device from
+`PRODUCT` to `FACTORY` mode. The remaining work is ROM polish/stability.
 
-Tools: **kibo** (BotchedRPR, Linux, GPL) or the Windows
-`BlackBerryBootUnlock.exe` (krab-ubica).
+---
+
+## Completed
+
+- **Bootloader unlock** via CVE-2021-1931 (`kibo` / `BlackBerryBootUnlock.exe`).
+- **Full unlock-tool RE** — .NET CLI tool over libusb; exact command sequence,
+  patch table, and payload provenance.
+- **Autoloader analysis** — ACQ160 package, A/B slot flow, BBRYBlob signatures.
+- **LineageOS port** — community build (kernel 4.4), dual-SIM working.
+
+## Achieved
+
+- ✅ **Boot mode `PRODUCT → FACTORY` persisted to RPMB** — a permanent,
+  reboot-surviving unlock.
+- ✅ **Running LineageOS 22.2 (Android 15)** on retail hardware.
+- ✅ **Payload provenance proven by SHA-256** — autoloader extraction == kibo
+  `acq160.exe` == Windows tool `160.bin`.
+
+## In Progress
+
+- **ROM stability:** SELinux + encryption completeness, keyboard-touchpad jitter
+  (disable via Quick Settings), some Play-Integrity-sensitive apps.
+
+## Failed
+
+- **Stock OS while unlocked** — BlackBerry's stock build refuses to boot in
+  FACTORY mode, so a **modified boot image is required** after unlock.
+- **Official LineageOS** — never happened (no clean GPL kernel source for the
+  KEY2); only unofficial/community builds exist.
+
+## Future Plans
+
+1. Polish the LineageOS 22.2 port (stability/encryption).
+2. Track newer community Android builds.
+
+---
+
+## Community Activity
+
+**The success story of the collection.** The community fully unlocked the
+KEY2/KEY2LE: **CVE-2021-1931** was found/exploited by **Christopher Wade (Pen
+Test Partners)**; **kibo** (BotchedRPR) and the Windows tool (krab-ubica) provide
+the unlock; **FumoEnterprises**, **krab-ubica**, and **npjohnson** maintain
+LineageOS 22.2 and /e/OS builds; **postmarketOS** has a mainline/U-Boot port.
+Active on XDA, Reddit r/blackberry, and the community wiki.
+
+---
+
+## Unlock deep-dive (CVE-2021-1931)
+
+### The vulnerability
+
+Qualcomm advisory (July 2021): *"Possible buffer overflow due to improper
+validation of buffer length while processing fast boot commands"* — CWE-120,
+fixed in SoCVersion 2021-07-05. Christopher Wade's *"Breaking Mobile Bootloaders"*
+(QPSS 2022) found and exploited it on an **SDM660** BlackBerry (the KEY2):
+
+- The ABL (Android BootLoader, a UEFI application) receives fastboot data into a
+  fixed buffer **without validating the length**. Sending ~1.5 MB over the USB
+  bulk endpoint overflows it.
+- BlackBerry had **modified the `flash:` command** to allow flashing certain
+  partitions while locked — that custom path is where validation is missing.
+- The overflow target is the ABL's own code in RAM.
+
+### The payload
+
+1. Send ~1 MB of zeros as padding, then a **byte-exact copy of the stock ACQ160
+   ABL PE** (extracted from the official autoloader, LZMA-inside-`abl.elf`) with
+   **9 instructions patched** — execution continues seamlessly but now runs
+   attacker-modified code.
+2. The patches: **defuse BbryWipeLib**, set the **"Boots Remaining" expiry
+   counter to `0xffff`** so factory mode never expires, and replace the
+   `bootmode` getvar handler with a call to `switch_bootmode(1, 0)` + reboot.
+3. Sending **`getvar:all`** triggers the patched handler: boot mode **1
+   (FACTORY)** is persisted to **RPMB**, then the device reboots — unlocked,
+   across reboots.
+4. Result: `MODE: PRODUCT → FACTORY`. Stock OS refuses to boot while unlocked →
+   flash the modded `acq160-mfi-boot.img`, then recovery + ROM.
 
 ### Tool reverse engineering
 
-The Windows tool is a .NET/C++-CLI assembly over `libusb-1.0.dll`; its entire
-fastboot surface is `getvar:bb_bc_version`, `getvar:all`, `getvar:bootmode`,
-`reboot-bootloader`. It selects a payload by bootloader version
-(`ACQ160` → `160.bin`, `ACT575` → `575.bin`), patches a hardcoded table of byte
-offsets (the signature-check patch), then sends the 429,108-byte buffer over a
-bulk transfer — the overflow. Success = `bootmode` changes `PRODUCT → FACTORY`.
+The Windows tool is a .NET/C++-CLI assembly over `libusb-1.0.dll`; its fastboot
+surface is `getvar:bb_bc_version`, `getvar:all`, `getvar:bootmode`,
+`reboot-bootloader`. It selects a payload by bootloader version (`ACQ160` →
+`160.bin`, `ACT575` → `575.bin`), patches a hardcoded table of byte offsets (the
+signature-check patch), then sends the 429,108-byte buffer — the overflow.
+Success = `bootmode` changes `PRODUCT → FACTORY`. Progress sticks at 75% (normal).
 
-Full analysis: [`notes/07-key2-unlock-tool-re.md`](notes/07-key2-unlock-tool-re.md).
-Decompiled IL: [`exploit/key2-unlock/il.txt`](exploit/key2-unlock/il.txt).
+Full analysis: [`notes/07-key2-unlock-tool-re.md`](notes/07-key2-unlock-tool-re.md);
+decompiled IL: [`exploit/key2-unlock/il.txt`](exploit/key2-unlock/il.txt).
 
 ### Tool binary provenance (not redistributed)
 
@@ -89,103 +160,74 @@ Decompiled IL: [`exploit/key2-unlock/il.txt`](exploit/key2-unlock/il.txt).
 
 1. Remove all Google accounts (they block the fastboot endpoint).
 2. Flash stock **ACQ160** autoloader **twice** (both A/B slots).
-3. Unlock: `kibo unlock` (Linux) or the Windows tool (progress sticks at 75% — normal).
+3. Unlock: `kibo unlock` (Linux) or the Windows tool (progress sticks at 75%).
 4. `MODE:` on the bootloader screen changes **PRODUCT → FACTORY**.
-5. BlackBerry's stock OS refuses to boot while unlocked → flash the modded
-   `acq160-mfi-boot.img`, then recovery + ROM.
-6. Unlock + custom recovery wipes userdata; back up first.
+5. Flash the modded `acq160-mfi-boot.img`, then recovery + ROM.
+6. Unlock + custom recovery **wipes userdata** — back up first.
 
----
+### LineageOS
 
-## LineageOS
+Unofficial/community (no official support). Recommended dual-SIM build:
+**LineageOS 22.2 + kernel 4.4** (`ZKrab-v1.10a`). Step-by-step:
+[`docs/KEY2-LineageOS-Guide.md`](docs/KEY2-LineageOS-Guide.md). Known issues on
+22.2: SELinux/encryption completeness, keyboard-touchpad jitter, some
+Play-Integrity apps.
 
-**Unofficial/community** (no official LineageOS support — clean GPL kernel
-source never happened for the KEY2). Recommended build for dual-SIM:
-**LineageOS 22.2 + kernel 4.4** (`ZKrab-v1.10a`). Full step-by-step guide:
-[`docs/KEY2-LineageOS-Guide.md`](docs/KEY2-LineageOS-Guide.md).
-
-Known issues on 22.2 include SELinux + encryption completeness, keyboard
-touchpad jitter (disable via Quick Settings), and some Play-Integrity
-sensitive apps.
-
----
-
-## Why the KEY2 fell and the KEYone did not
+### Why the KEY2 fell and the KEYone did not
 
 | | KEY2 (cracked) | KEYone (not) |
 |---|---|---|
 | SoC | SDM660 | MSM8953 |
 | Bootloader | **UEFI ABL** (`abl.elf`, edk2) | **LittleKernel** (`emmc_appsboot.mbn`) |
-| Exploit | **CVE-2021-1931** — overflow in ABL fastboot parser | n/a — different codebase |
+| Exploit | **CVE-2021-1931** — ABL fastboot parser overflow | n/a — different codebase |
 | Fix status | TCL never patched it | LK hardened against the classic LK CVEs |
 
-The KEY2 win is a bug in the UEFI ABL fastboot parser; the KEYone's LK shows
-the hardened length/size checks that patched CVE-2013-2598 / CVE-2014-0973.
-Even on the KEY2 the unlock is shallow — stock OS will not boot while unlocked
-without a patched boot image.
-
-Context: the KeyOne repo (`notes/09-keyone-recon-protection-and-key2-gap.md`).
-
----
-
-## How the unlock works (full analysis)
-
-The complete, evidence-backed explanation lives in
-[`docs/KEY2-unlock-mechanism.md`](docs/KEY2-unlock-mechanism.md):
-
-1. **CVE-2021-1931** — the ABL's fastboot data path copies without a length
-   check (CWE-120). ~1.5 MB of USB bulk data overflows into the running ABL's
-   own memory.
-2. The payload is a **byte-exact copy of the stock ACQ160 ABL PE** extracted
-   from the official autoloader (LZMA-inside-`abl.elf`), with 9 instructions
-   patched. Proven by SHA-256: autoloader extraction == kibo `acq160.exe` ==
-   Windows tool `160.bin`.
-3. The patches **defuse BbryWipeLib**, **max the "Boots Remaining" counter**,
-   and replace the `bootmode` getvar handler with a call to
-   `switch_bootmode(1, 0)` + reboot.
-4. Sending **`getvar:all`** triggers the patched handler: boot mode 1
-   (**FACTORY**) is persisted to RPMB, then the device reboots to the
-   bootloader — unlocked, across reboots.
-
-The official autoloader package itself is analyzed in
-[`docs/KEY2-autoloader-analysis.md`](docs/KEY2-autoloader-analysis.md)
-(flash flow, A/B slot switching, BBRYBlob signatures, BTAS/RTAS auth stack).
+The KEY2 win is a bug in the UEFI ABL fastboot parser; the KEYone's LK shows the
+hardened length/size checks that patched CVE-2013-2598 / CVE-2014-0973. Even on
+the KEY2 the unlock is shallow — stock OS won't boot while unlocked without a
+patched boot image.
 
 ---
 
 ## Repository layout
 
-- `docs/KEY2-unlock-mechanism.md` — **full unlock explanation**: CVE, payload
-  provenance (SHA-256 proof), every patched instruction, why FACTORY mode
-  persists, kibo-vs-Windows-tool comparison.
-- `docs/KEY2-unlock-tool-re.md` — **complete RE of the Windows unlock tool**:
-  UI/action surface, USB layer, exact command sequence with timeouts, patch
-  application order, Relock path, quirks.
-- `docs/KEY2-autoloader-analysis.md` — official ACQ160 package: contents,
-  `flashall.bat` flow, custom fastboot/authboot commands, BBRYBlob signature
-  format, `abl.elf` container chain.
-- `docs/KEY2-LineageOS-Guide.md` — complete unlock → LineageOS 22.2 install guide.
-- `notes/04-key2-lineageos-research.md` — live device recon, LineageOS status, risk assessment.
-- `notes/07-key2-unlock-tool-re.md` — unlock tool reverse engineering (protocol, patch mechanism).
-- `notes/09-keyone-recon-protection-and-key2-gap.md` — protection model and KEY2-vs-KEYone architectural gap.
-- `recon/` — raw live captures: `getprop`, `by-name` partition map, unlock state, kernel parts, key flags.
-- `exploit/key2-unlock/` — decompiled IL of the unlock tool + resource dump (binaries not redistributed).
-- `devmaps/key2-bbf100-6.json` — live device map (LineageOS 22.2, L0–L2)
-  produced with the `devmap` framework: 149 mounts, 270 services, 92 sockets,
-  18 device nodes, SELinux enforcing, kernel 4.4.302-Key2+.
+- `docs/KEY2-unlock-mechanism.md` — full unlock explanation (CVE, payload
+  provenance, patched instructions, why FACTORY persists).
+- `docs/KEY2-unlock-tool-re.md` — complete RE of the Windows unlock tool.
+- `docs/KEY2-autoloader-analysis.md` — official ACQ160 package analysis.
+- `docs/KEY2-LineageOS-Guide.md` — complete install guide.
+- `notes/04-key2-lineageos-research.md`, `notes/07-key2-unlock-tool-re.md` — live recon + tool RE.
+- `recon/` — raw live captures (`getprop`, `by-name`, unlock state, kernel parts).
+- `exploit/key2-unlock/` — decompiled IL + resource dump (binaries not redistributed).
+- `devmaps/key2-bbf100-6.json` — live device map (L0–L2).
 
-## Related
+---
+
+## Related repos
 
 - **Hub:** [Blackberry-Research](https://github.com/stanw47/Blackberry-Research) —
-  cross-device mechanisms and the **devmap** standardized device-mapping
-  framework (`toolchain/devmap.py`).
+  cross-device mechanisms + the `devmap` framework (`toolchain/devmap.py`).
 - **KEYone:** [Blackberry-KeyOne-Research](https://github.com/stanw47/Blackberry-KeyOne-Research) —
   the locked sibling (LK bootloader + KGSL/IOMMU kernel research).
 
-## References
+---
 
-- **CVE-2021-1931** — Qualcomm fastboot/ABL buffer overflow (KEY2/KEY2 LE unlock) — Christopher Wade / Pen Test Partners.
-- **kibo** — https://github.com/BotchedRPR/kibo
-- **KEY2 LineageOS device trees** — FumoEnterprises (`android_device_blackberry_athena`, `android_device_blackberry_sdm660-common`, `android_kernel_blackberry_sdm660-4p19`).
-- **Community wiki / ROM mirror** — luna-terra-cg.github.io/wiki / fumo.enterprises.
-- **postmarketOS** — `blackberry-key2-generic` port (mainline/U-Boot).
+## Citations & Acknowledgements
+
+| Source | URL | Relevance |
+|---|---|---|
+| CVE-2021-1931 | Qualcomm | fastboot/ABL buffer overflow |
+| Christopher Wade — Pen Test Partners | QPSS 2022 talk | found/exploited CVE-2021-1931 |
+| BotchedRPR / kibo | https://github.com/BotchedRPR/kibo | unlock payload/tool |
+| FumoEnterprises | LineageOS device trees | athena / sdm660-common / kernel |
+| krab-ubica, npjohnson | community | unlock + ROM maintenance |
+| postmarketOS | https://postmarketos.org | `blackberry-key2-generic` port |
+
+Thanks to the XDA / Reddit / postmarketOS communities.
+
+---
+
+## License
+
+Research notes and original scripts are provided for educational purposes;
+third-party code retains its own license.
