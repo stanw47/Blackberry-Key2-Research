@@ -134,6 +134,12 @@ Context: [`notes/09-keyone-recon-protection-and-key2-gap.md`](notes/09-keyone-re
 - `recon/` — raw live captures: `getprop`, `by-name` partition map, unlock state, kernel parts, key flags.
 - `exploit/key2-unlock/` — decompiled IL of the unlock tool + resource dump (binaries not redistributed).
 
+## Related
+
+- [Blackberry-KeyOne-Research](https://github.com/stanw47/Blackberry-KeyOne-Research) —
+  the KEYone counterpart, including the **devmap** standardized device-mapping
+  framework (`tools/devmap.py`) and the KEYone KGSL/IOMMU kernel research.
+
 ## References
 
 - **CVE-2021-1931** — Qualcomm fastboot/ABL buffer overflow (KEY2/KEY2 LE unlock) — Christopher Wade / Pen Test Partners.
