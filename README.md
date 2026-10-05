@@ -125,14 +125,48 @@ Context: [`notes/09-keyone-recon-protection-and-key2-gap.md`](notes/09-keyone-re
 
 ---
 
+## How the unlock works (full analysis)
+
+The complete, evidence-backed explanation lives in
+[`docs/KEY2-unlock-mechanism.md`](docs/KEY2-unlock-mechanism.md):
+
+1. **CVE-2021-1931** — the ABL's fastboot data path copies without a length
+   check (CWE-120). ~1.5 MB of USB bulk data overflows into the running ABL's
+   own memory.
+2. The payload is a **byte-exact copy of the stock ACQ160 ABL PE** extracted
+   from the official autoloader (LZMA-inside-`abl.elf`), with 9 instructions
+   patched. Proven by SHA-256: autoloader extraction == kibo `acq160.exe` ==
+   Windows tool `160.bin`.
+3. The patches **defuse BbryWipeLib**, **max the "Boots Remaining" counter**,
+   and replace the `bootmode` getvar handler with a call to
+   `switch_bootmode(1, 0)` + reboot.
+4. Sending **`getvar:all`** triggers the patched handler: boot mode 1
+   (**FACTORY**) is persisted to RPMB, then the device reboots to the
+   bootloader — unlocked, across reboots.
+
+The official autoloader package itself is analyzed in
+[`docs/KEY2-autoloader-analysis.md`](docs/KEY2-autoloader-analysis.md)
+(flash flow, A/B slot switching, BBRYBlob signatures, BTAS/RTAS auth stack).
+
+---
+
 ## Repository layout
 
+- `docs/KEY2-unlock-mechanism.md` — **full unlock explanation**: CVE, payload
+  provenance (SHA-256 proof), every patched instruction, why FACTORY mode
+  persists, kibo-vs-Windows-tool comparison.
+- `docs/KEY2-autoloader-analysis.md` — official ACQ160 package: contents,
+  `flashall.bat` flow, custom fastboot/authboot commands, BBRYBlob signature
+  format, `abl.elf` container chain.
 - `docs/KEY2-LineageOS-Guide.md` — complete unlock → LineageOS 22.2 install guide.
 - `notes/04-key2-lineageos-research.md` — live device recon, LineageOS status, risk assessment.
 - `notes/07-key2-unlock-tool-re.md` — unlock tool reverse engineering (protocol, patch mechanism).
 - `notes/09-keyone-recon-protection-and-key2-gap.md` — protection model and KEY2-vs-KEYone architectural gap.
 - `recon/` — raw live captures: `getprop`, `by-name` partition map, unlock state, kernel parts, key flags.
 - `exploit/key2-unlock/` — decompiled IL of the unlock tool + resource dump (binaries not redistributed).
+- `devmaps/key2-bbf100-6.json` — live device map (LineageOS 22.2, L0–L2)
+  produced with the `devmap` framework: 149 mounts, 270 services, 92 sockets,
+  18 device nodes, SELinux enforcing, kernel 4.4.302-Key2+.
 
 ## Related
 
