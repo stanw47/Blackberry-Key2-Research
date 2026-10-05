@@ -99,9 +99,10 @@ UEFI ABL fastboot parser (the `kibo` payload), which flips the device from
 **The most successful device in this collection.**
 
 - **Christopher Wade (Pen Test Partners)** found and exploited **CVE-2021-1931**.
-- **BotchedRPR (Igor)** authored **kibo** and maintains the LineageOS 22.2 builds
-  for KEY2 (athena) and KEY2 LE (luna); **krab-ubica** led the bootloader-unlock
-  research; **npjohnson** contributed Nokia SDM660 blobs.
+- **BotchedRPR (Igor)** authored **kibo**; the current LineageOS 22.2 build for
+  KEY2 (athena) is maintained by **zzach (zapaca)** (previously BotchedRPR);
+  **krab-ubica** led the bootloader-unlock research; **npjohnson** contributed
+  Nokia SDM660 blobs.
 - **FumoEnterprises** hosts recovery/ROM images; **tim-ecoder** maintains
   `lineageos_blackberry_athena`; **ronnz98** publishes /e/OS builds.
 - **FakeShell/CVE-2021-1931-BBRY-KEY2** is a public proof-of-concept.
@@ -121,8 +122,9 @@ fixed in SoCVersion 2021-07-05. Christopher Wade's *"Breaking Mobile Bootloaders
 (QPSS 2022) found and exploited it on an **SDM660** BlackBerry (the KEY2):
 
 - The ABL (Android BootLoader, a UEFI application) receives fastboot data into a
-  fixed buffer **without validating the length**. Sending ~1.5 MB over the USB
-  bulk endpoint overflows it.
+  fixed buffer **without validating the length**. Sending ~1.4 MB (1 MB padding +
+  a 429,108-byte payload) over the USB bulk endpoint overflows it; the minimum
+  overflow size measured was `0x11bae0` (~1.16 MB).
 - BlackBerry had **modified the `flash:` command** to allow flashing certain
   partitions while locked — that custom path is where validation is missing.
 - The overflow target is the ABL's own code in RAM.
@@ -174,7 +176,7 @@ decompiled IL: [`exploit/key2-unlock/il.txt`](exploit/key2-unlock/il.txt).
 ### LineageOS
 
 Unofficial/community (no official support). Recommended dual-SIM build:
-**LineageOS 22.2 + kernel 4.4** (`ZKrab-v1.10a`). Step-by-step:
+**LineageOS 22.2 + kernel 4.4** (`ZKrab-v1.12a`). Step-by-step:
 [`docs/KEY2-LineageOS-Guide.md`](docs/KEY2-LineageOS-Guide.md). Known issues on
 22.2: SELinux/encryption completeness, keyboard-touchpad jitter, some
 Play-Integrity apps.

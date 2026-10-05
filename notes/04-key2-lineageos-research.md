@@ -102,7 +102,7 @@ Reason: clean GPL kernel source/vendor compliance never happened for KEY2.
 ### Builds available (via community wiki luna-terra-cg.github.io/wiki)
 | Variant | Android | Kernel | Notes |
 |---|---|---|---|
-| **LOS 22.2 + K4.4** (`ZKrab-v1.10a`) | 15 | 4.4 | **← use this one for SIM/dual-SIM** |
+| **LOS 22.2 + K4.4** (`ZKrab-v1.12a`) | 15 | 4.4 | **← use this one for SIM/dual-SIM** |
 | LOS 22.2 + K4.19 (`1.20F`) | 15 | 4.19 | newer kernel, beta |
 | LOS 23.2 + K4.19 (`2.0G`) | 16 | 4.19 | alpha |
 
@@ -166,7 +166,7 @@ works because ACQ160 is the intended base for the exploit; **do not** flash arbi
 Proceed, but:
 1. Use **kibo on Linux** (your normal workflow, and source is auditable).
 2. Flash **ACQ160 autoloader twice** first.
-3. Install **LOS 22.2 + kernel 4.4 (ZKrab-v1.10a)** for working dual-SIM.
+3. Install **LOS 22.2 + kernel 4.4 (ZKrab-v1.12a)** for working dual-SIM.
 4. Remove Google accounts before unlocking.
 5. Expect to need the modded `acq160-mfi-boot.img` to boot stock raised/locked states.
 
