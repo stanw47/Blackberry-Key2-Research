@@ -155,6 +155,9 @@ The official autoloader package itself is analyzed in
 - `docs/KEY2-unlock-mechanism.md` — **full unlock explanation**: CVE, payload
   provenance (SHA-256 proof), every patched instruction, why FACTORY mode
   persists, kibo-vs-Windows-tool comparison.
+- `docs/KEY2-unlock-tool-re.md` — **complete RE of the Windows unlock tool**:
+  UI/action surface, USB layer, exact command sequence with timeouts, patch
+  application order, Relock path, quirks.
 - `docs/KEY2-autoloader-analysis.md` — official ACQ160 package: contents,
   `flashall.bat` flow, custom fastboot/authboot commands, BBRYBlob signature
   format, `abl.elf` container chain.

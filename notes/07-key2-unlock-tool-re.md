@@ -1,5 +1,11 @@
 # KEY2 Bootloader Unlock Tool — Reverse Engineering
 
+> Extended by [`docs/KEY2-unlock-tool-re.md`](../docs/KEY2-unlock-tool-re.md)
+> (complete tool RE: UI actions, USB layer, Relock path, exact sequence) and
+> [`docs/KEY2-unlock-mechanism.md`](../docs/KEY2-unlock-mechanism.md)
+> (exploit theory and patch semantics). This note remains the original
+> first-pass analysis.
+
 Source: `BlackBerryBootUnlock.exe` (v1.1), shipped in `key2-unlock-public.zip`.
 Analyzed via `ildasm` + string/IL inspection. Dumps: `exploit/key2-unlock/`.
 
