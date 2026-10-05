@@ -27,9 +27,9 @@
 | Model | BlackBerry KEY2 **BBF100-6** |
 | Codename | `bbf100` / athena |
 | SoC | Qualcomm **SDM660** (Snapdragon 660) |
-| OS / software | Android 8.1 (stock) → **LineageOS 22.2** |
+| OS / software | Android 8.1 (stock) to **LineageOS 22.2** |
 | Current build | LineageOS 22.2 (Android 15), kernel 4.4.302 |
-| Previous builds | stock **ABN088** (Android 8.1.0, kernel 4.4.78), patch 2018-12-01 |
+| Previous builds | stock **ABN088** (Android 8.1.0, kernel 4.4.78), patch 2018-12-01, **PRD-63828-031** |
 | Carrier / unlock | **India/APAC variant; dual-SIM**; `ro.oem_unlock_supported=true`; **UNLOCKED** |
 | SIM | **dual-SIM** |
 
@@ -69,10 +69,10 @@ UEFI ABL fastboot parser (the `kibo` payload), which flips the device from
 
 ## Achieved
 
-- ✅ **Boot mode `PRODUCT → FACTORY` persisted to RPMB** — a permanent,
+- **Boot mode `PRODUCT FACTORY` persisted to RPMB** — a permanent,
   reboot-surviving unlock.
-- ✅ **Running LineageOS 22.2 (Android 15)** on retail hardware.
-- ✅ **Payload provenance proven by SHA-256** — autoloader extraction == kibo
+- **Running LineageOS 22.2 (Android 15)** on retail hardware.
+- **Payload provenance proven by SHA-256** — autoloader extraction == kibo
   `acq160.exe` == Windows tool `160.bin`.
 
 ## In Progress
@@ -96,14 +96,20 @@ UEFI ABL fastboot parser (the `kibo` payload), which flips the device from
 
 ## Community Activity
 
-**The success story of the collection.** The community fully unlocked the
-KEY2/KEY2LE: **CVE-2021-1931** was found/exploited by **Christopher Wade (Pen
-Test Partners)**; **kibo** (BotchedRPR) and the Windows tool (krab-ubica) provide
-the unlock; **FumoEnterprises**, **krab-ubica**, and **npjohnson** maintain
-LineageOS 22.2 and /e/OS builds; **postmarketOS** has a mainline/U-Boot port.
-Active on XDA, Reddit r/blackberry, and the community wiki.
+**The most successful device in this collection.**
 
----
+- **Christopher Wade (Pen Test Partners)** found and exploited **CVE-2021-1931**.
+- **BotchedRPR (Igor)** authored **kibo** and maintains the LineageOS 22.2 builds
+  for KEY2 (athena) and KEY2 LE (luna); **krab-ubica** led the bootloader-unlock
+  research; **npjohnson** contributed Nokia SDM660 blobs.
+- **FumoEnterprises** hosts recovery/ROM images; **tim-ecoder** maintains
+  `lineageos_blackberry_athena`; **ronnz98** publishes /e/OS builds.
+- **FakeShell/CVE-2021-1931-BBRY-KEY2** is a public proof-of-concept.
+- **postmarketOS** has a `blackberry-key2-generic` port (mainline/U-Boot).
+- Known issues on 22.2: SELinux and encryption disabled, keyboard-touchpad
+  jitter, some camera/flash quirks.
+- Hubs: XDA, Reddit r/blackberry, the BlackBerry Android Hideout Discord, and the
+  community wiki.
 
 ## Unlock deep-dive (CVE-2021-1931)
 
@@ -133,17 +139,17 @@ fixed in SoCVersion 2021-07-05. Christopher Wade's *"Breaking Mobile Bootloaders
 3. Sending **`getvar:all`** triggers the patched handler: boot mode **1
    (FACTORY)** is persisted to **RPMB**, then the device reboots — unlocked,
    across reboots.
-4. Result: `MODE: PRODUCT → FACTORY`. Stock OS refuses to boot while unlocked →
+4. Result: `MODE: PRODUCT FACTORY`. Stock OS refuses to boot while unlocked ->
    flash the modded `acq160-mfi-boot.img`, then recovery + ROM.
 
 ### Tool reverse engineering
 
 The Windows tool is a .NET/C++-CLI assembly over `libusb-1.0.dll`; its fastboot
 surface is `getvar:bb_bc_version`, `getvar:all`, `getvar:bootmode`,
-`reboot-bootloader`. It selects a payload by bootloader version (`ACQ160` →
-`160.bin`, `ACT575` → `575.bin`), patches a hardcoded table of byte offsets (the
+`reboot-bootloader`. It selects a payload by bootloader version (`ACQ160` ->
+`160.bin`, `ACT575` `575.bin`), patches a hardcoded table of byte offsets (the
 signature-check patch), then sends the 429,108-byte buffer — the overflow.
-Success = `bootmode` changes `PRODUCT → FACTORY`. Progress sticks at 75% (normal).
+Success = `bootmode` changes `PRODUCT FACTORY`. Progress sticks at 75% (normal).
 
 Full analysis: [`notes/07-key2-unlock-tool-re.md`](notes/07-key2-unlock-tool-re.md);
 decompiled IL: [`exploit/key2-unlock/il.txt`](exploit/key2-unlock/il.txt).
@@ -161,7 +167,7 @@ decompiled IL: [`exploit/key2-unlock/il.txt`](exploit/key2-unlock/il.txt).
 1. Remove all Google accounts (they block the fastboot endpoint).
 2. Flash stock **ACQ160** autoloader **twice** (both A/B slots).
 3. Unlock: `kibo unlock` (Linux) or the Windows tool (progress sticks at 75%).
-4. `MODE:` on the bootloader screen changes **PRODUCT → FACTORY**.
+4. `MODE:` on the bootloader screen changes **PRODUCT FACTORY**.
 5. Flash the modded `acq160-mfi-boot.img`, then recovery + ROM.
 6. Unlock + custom recovery **wipes userdata** — back up first.
 
