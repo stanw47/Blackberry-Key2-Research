@@ -5,6 +5,9 @@ Reverse-engineering, unlock, and LineageOS research for the **BlackBerry KEY2
 device where the unpatched **CVE-2021-1931** fastboot overflow still yields a
 bootloader unlock.
 
+> Part of the **[Blackberry-Research](https://github.com/stanw47/Blackberry-Research)**
+> collection. Cross-device mechanisms live in the hub; this repo is KEY2-specific.
+
 > **Disclaimer.** This repo is a *research aid*, not a flashing guide.
 > Everything here is for educational / defensive research on devices owned by
 > the author. Unlocking a bootloader and flashing firmware can **permanently
@@ -121,7 +124,7 @@ the hardened length/size checks that patched CVE-2013-2598 / CVE-2014-0973.
 Even on the KEY2 the unlock is shallow — stock OS will not boot while unlocked
 without a patched boot image.
 
-Context: [`notes/09-keyone-recon-protection-and-key2-gap.md`](notes/09-keyone-recon-protection-and-key2-gap.md).
+Context: the KeyOne repo (`notes/09-keyone-recon-protection-and-key2-gap.md`).
 
 ---
 
@@ -173,9 +176,11 @@ The official autoloader package itself is analyzed in
 
 ## Related
 
-- [Blackberry-KeyOne-Research](https://github.com/stanw47/Blackberry-KeyOne-Research) —
-  the KEYone counterpart, including the **devmap** standardized device-mapping
-  framework (`tools/devmap.py`) and the KEYone KGSL/IOMMU kernel research.
+- **Hub:** [Blackberry-Research](https://github.com/stanw47/Blackberry-Research) —
+  cross-device mechanisms and the **devmap** standardized device-mapping
+  framework (`toolchain/devmap.py`).
+- **KEYone:** [Blackberry-KeyOne-Research](https://github.com/stanw47/Blackberry-KeyOne-Research) —
+  the locked sibling (LK bootloader + KGSL/IOMMU kernel research).
 
 ## References
 
