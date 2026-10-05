@@ -1,0 +1,114 @@
+﻿Linux version 4.4.78-perf+ (ec_agent@br815cnc) (gcc version 4.9.x 20150123 (prerelease) (GCC) ) #1 SMP PREEMPT Tue Dec 11 13:26:36 EST 2018
+---
+Linux localhost 4.4.78-perf+ #1 SMP PREEMPT Tue Dec 11 13:26:36 EST 2018 aarch64
+---SLOT---
+
+
+---AB---
+total 0
+drwxr-xr-x 2 root root 1580 1970-04-27 13:34 .
+drwxr-xr-x 4 root root 1660 1970-04-27 13:34 ..
+lrwxrwxrwx 1 root root   21 1970-04-27 13:34 abl_a -> /dev/block/mmcblk0p37
+lrwxrwxrwx 1 root root   21 1970-04-27 13:34 abl_b -> /dev/block/mmcblk0p49
+---PART---
+major minor  #blocks  name
+
+   1        0       8192 ram0
+   1        1       8192 ram1
+   1        2       8192 ram2
+   1        3       8192 ram3
+   1        4       8192 ram4
+   1        5       8192 ram5
+   1        6       8192 ram6
+   1        7       8192 ram7
+   1        8       8192 ram8
+   1        9       8192 ram9
+   1       10       8192 ram10
+   1       11       8192 ram11
+   1       12       8192 ram12
+   1       13       8192 ram13
+   1       14       8192 ram14
+   1       15       8192 ram15
+ 253        0     524288 zram0
+ 179        0   61071360 mmcblk0
+ 179        1       8172 mmcblk0p1
+ 179        2       1024 mmcblk0p2
+ 179        3       7168 mmcblk0p3
+ 179        4       4096 mmcblk0p4
+ 179        5       1024 mmcblk0p5
+ 179        6          4 mmcblk0p6
+ 179        7        256 mmcblk0p7
+ 179        8        256 mmcblk0p8
+ 179        9          1 mmcblk0p9
+ 179       10      33424 mmcblk0p10
+ 179       11          4 mmcblk0p11
+ 179       12       1024 mmcblk0p12
+ 179       13       1024 mmcblk0p13
+ 179       14         16 mmcblk0p14
+ 179       15        128 mmcblk0p15
+ 179       16       4096 mmcblk0p16
+ 179       17        252 mmcblk0p17
+ 179       18        252 mmcblk0p18
+ 179       19         64 mmcblk0p19
+ 179       20       1024 mmcblk0p20
+ 179       21      16384 mmcblk0p21
+ 179       22      32768 mmcblk0p22
+ 179       23      65536 mmcblk0p23
+ 179       24     112640 mmcblk0p24
+ 179       25          4 mmcblk0p25
+ 179       26       4248 mmcblk0p26
+ 179       27       3584 mmcblk0p27
+ 179       28       4096 mmcblk0p28
+ 179       29        512 mmcblk0p29
+ 179       30        512 mmcblk0p30
+ 179       31        512 mmcblk0p31
+ 259        0       1024 mmcblk0p32
+ 259        1       1024 mmcblk0p33
+ 259        2       1024 mmcblk0p34
+ 259        3       4096 mmcblk0p35
+ 259        4       1024 mmcblk0p36
+ 259        5       1024 mmcblk0p37
+ 259        6       6144 mmcblk0p38
+ 259        7       3584 mmcblk0p39
+ 259        8       4096 mmcblk0p40
+ 259        9        512 mmcblk0p41
+ 259       10        512 mmcblk0p42
+ 259       11        512 mmcblk0p43
+ 259       12       1024 mmcblk0p44
+ 259       13       1024 mmcblk0p45
+ 259       14       1024 mmcblk0p46
+ 259       15       4096 mmcblk0p47
+ 259       16       1024 mmcblk0p48
+ 259       17       1024 mmcblk0p49
+ 259       18       8192 mmcblk0p50
+ 259       19          1 mmcblk0p51
+ 259       20          8 mmcblk0p52
+ 259       21      32768 mmcblk0p53
+ 259       22       1024 mmcblk0p54
+ 259       23        512 mmcblk0p55
+ 259       24        512 mmcblk0p56
+ 259       25      65532 mmcblk0p57
+ 259       26          4 mmcblk0p58
+ 259       27      20480 mmcblk0p59
+ 259       28      51200 mmcblk0p60
+ 259       29      65536 mmcblk0p61
+ 259       30       2048 mmcblk0p62
+ 259       31     131072 mmcblk0p63
+ 259       32       4096 mmcblk0p64
+ 259       33       4096 mmcblk0p65
+ 259       34        256 mmcblk0p66
+ 259       35        256 mmcblk0p67
+ 259       36       1024 mmcblk0p68
+ 259       37      16384 mmcblk0p69
+ 259       38      12288 mmcblk0p70
+ 259       39       1024 mmcblk0p71
+ 259       40      20480 mmcblk0p72
+ 259       41    3784704 mmcblk0p73
+ 259       42     819200 mmcblk0p74
+ 259       43    1126400 mmcblk0p75
+ 259       44    1048576 mmcblk0p76
+ 259       45   53501935 mmcblk0p77
+ 179       32      16384 mmcblk0rpmb
+ 252        0    3725640 dm-0
+ 252        1     806376 dm-1
+ 252        2    1108788 dm-2

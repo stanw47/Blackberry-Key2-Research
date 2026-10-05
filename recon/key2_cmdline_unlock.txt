@@ -1,0 +1,14 @@
+﻿cat: /proc/cmdline: Permission denied
+===
+/system/bin/sh: ab_: not found
+adb.exe : /system/bin/sh: slot: not found
+At line:1 char:107
++ ... s\adb.exe'; & $adb shell 'cat /proc/cmdline 2>&1; echo ===; getprop | ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (/system/bin/sh: slot: not found:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+/system/bin/sh: a_b: not found
+===RECOVERY===
+lrwxrwxrwx 1 root root 21 1970-04-27 13:34 /dev/block/bootdevice/by-name/recovery -> /dev/block/mmcblk0p57
+lrwxrwxrwx 1 root root 21 1970-04-27 13:34 /dev/block/bootdevice/by-name/recoverysig -> /dev/block/mmcblk0p58

@@ -1,0 +1,22 @@
+﻿---UNLOCKSUP---
+true
+0
+---VBS---
+green
+---GSI---
+unknown
+bbf100dsglobalindia
+---SANDBOX---
+bbry_sdm660_sfi-user
+---MOUNT---
+adb.exe : /system/bin/sh: vendor: not found
+At line:1 char:107
++ ... s\adb.exe'; & $adb shell 'echo ---UNLOCKSUP---; getprop ro.oem_unlock ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (/system/bin/sh: vendor: not found:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+/system/bin/sh: dm-: not found
+---SLOT---
+
+current:cat: /proc/cmdline: Permission denied

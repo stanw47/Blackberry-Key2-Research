@@ -1,0 +1,35 @@
+# Firmware blobs and extracted autoloaders (large, not redistributed)
+firmware/**
+!firmware/.gitkeep
+
+# Large firmware archives / dumps / images
+*.rar
+*.7z
+*.zip
+*.exe
+*.img
+*.mbn
+*.elf
+*.bin
+*.dll
+*.resources
+
+# Downloads / temp
+*.megatmp*
+*.log
+
+# Keys and secrets
+id_rsa
+id_rsa.pub
+*.pem
+*.key
+*credentials*
+
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Python bytecode
+__pycache__/
+*.pyc
